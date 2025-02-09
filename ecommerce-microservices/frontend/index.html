@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-Commerce Microservices</title>
+</head>
+<body>
+    <h1>Bienvenue sur notre plateforme e-commerce</h1>
+    <h2>Liste des produits</h2>
+    <ul id="product-list"></ul>
+    
+    <h2>Passer une commande</h2>
+    <form id="order-form">
+        <label for="product-id">ID du produit:</label>
+        <input type="number" id="product-id" required>
+        <label for="quantity">Quantité:</label>
+        <input type="number" id="quantity" required>
+        <button type="submit">Commander</button>
+    </form>
+
+    <h2>Effectuer un paiement</h2>
+    <form id="payment-form">
+        <label for="order-id">ID de la commande:</label>
+        <input type="number" id="order-id" required>
+        <label for="amount">Montant:</label>
+        <input type="number" id="amount" required>
+        <button type="submit">Payer</button>
+    </form>
+
+    <script>
+        document.getElementById('order-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const productId = document.getElementById('product-id').value;
+            const quantity = document.getElementById('quantity').value;
+            
+            fetch('/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id: productId, quantity: quantity })
+            })
+            .then(response => response.json())
+            .then(data => alert("Commande créée avec succès! ID: " + data.id))
+            .catch(error => alert("Erreur lors de la commande"));
+        });
+
+        document.getElementById('payment-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const orderId = document.getElementById('order-id').value;
+            const amount = document.getElementById('amount').value;
+            
+            fetch('/pay', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ order_id: orderId, amount: amount })
+            })
+            .then(response => response.json())
+            .then(data => alert("Paiement effectué! ID de paiement: " + data.payment_id))
+            .catch(error => alert("Échec du paiement"));
+        });
+    </script>
+</body>
+</html>
